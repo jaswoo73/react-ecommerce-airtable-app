@@ -1,12 +1,128 @@
-import React from 'react'
-import styled from 'styled-components'
-import { useFilterContext } from '../context/filter_context'
-import { getUniqueValues, formatPrice } from '../utils/helpers'
-import { FaCheck } from 'react-icons/fa'
+import React from "react";
+import styled from "styled-components";
+import { useFilterContext } from "../context/filter_context";
+import { getUniqueValues, formatPrice } from "../utils/helpers";
+import { FaCheck } from "react-icons/fa";
 
 const Filters = () => {
-  return <h4>filters</h4>
-}
+  const {
+    filters: {
+      text,
+      category,
+      company,
+      color,
+      min_price,
+      price,
+      max_price,
+      shipping,
+    },
+    updateFilters,
+    clearFilters,
+    all_products,
+  } = useFilterContext();
+
+  const categories = getUniqueValues(all_products, "category");
+  const companies = getUniqueValues(all_products, "company");
+  const colors = getUniqueValues(all_products, "colors");
+
+  return (
+    <Wrapper>
+      <div className="content">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          {/* SEARCH INPUT */}
+          <div className="form-control">
+            <input
+              type="text"
+              name="text"
+              className="search-input"
+              placeholder="Search"
+              value={text}
+              onChange={updateFilters}
+            />
+          </div>
+          {/* CATEGORIES */}
+          <div className="form-control">
+            <h5>category</h5>
+            <div>
+              {categories.map((cat, index) => {
+                return (
+                  <button
+                    type="button"
+                    key={index}
+                    onClick={updateFilters}
+                    name="category"
+                    className={`category-btn ${
+                      category === cat.toLowerCase() ? "cat-active" : null
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          {/* COMPANIES */}
+          <div className="form-control">
+            <h5>company</h5>
+            <select
+              name="company"
+              value={company}
+              className="company"
+              onChange={updateFilters}
+            >
+              {companies.map((company, index) => {
+                return (
+                  <option key={index} value={company}>
+                    {company}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          {/* COLORS */}
+          <div className="form-control">
+            <h5>colors</h5>
+            <div className="colors">
+              {colors.map((col, index) => {
+                if (col === "all") {
+                  return (
+                    <button
+                      key={index}
+                      name="color"
+                      onClick={updateFilters}
+                      data-color="all"
+                      className={`${
+                        color === "all" ? "all-btn active" : "all-btn"
+                      }`}
+                    >
+                      all
+                    </button>
+                  );
+                }
+                return (
+                  <button
+                    key={index}
+                    name="color"
+                    style={{ background: col }}
+                    className={`color-btn ${color === col && "col-active"}`}
+                    data-color={col}
+                    onClick={updateFilters}
+                  >
+                    {color === col && <FaCheck />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </form>
+      </div>
+    </Wrapper>
+  );
+};
 
 const Wrapper = styled.section`
   .form-control {
@@ -21,6 +137,7 @@ const Wrapper = styled.section`
     border-radius: var(--radius);
     border-color: transparent;
     letter-spacing: var(--spacing);
+    caret-color: var(--clr-primary-6);
   }
   .search-input::placeholder {
     text-transform: capitalize;
@@ -33,14 +150,34 @@ const Wrapper = styled.section`
     text-transform: capitalize;
     background: transparent;
     border: none;
-    border-bottom: 1px solid transparent;
+    position: relative;
     letter-spacing: var(--spacing);
     color: var(--clr-grey-5);
     cursor: pointer;
   }
-  .active {
-    border-color: var(--clr-grey-5);
+  .category-btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: var(--clr-primary-6);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.3s;
   }
+  .category-btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+
+  .cat-active {
+    border-left: solid 3px var(--clr-primary-6);
+    padding-left: 1rem;
+    transition: var(--transition);
+  }
+
   .company {
     background: var(--clr-grey-10);
     border-radius: var(--radius);
@@ -60,7 +197,6 @@ const Wrapper = styled.section`
     margin-right: 0.5rem;
     border: none;
     cursor: pointer;
-    opacity: 0.5;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,11 +212,12 @@ const Wrapper = styled.section`
     margin-right: 0.5rem;
     opacity: 0.5;
   }
-  .active {
-    opacity: 1;
+  .col-active {
+    box-shadow: 0 0 2px 2px var(--clr-grey-6);
   }
-  .all-btn .active {
-    text-decoration: underline;
+  .all-btn.active {
+    opacity: 1;
+    border-bottom: solid 1px var(--clr-primary-6);
   }
   .price {
     margin-bottom: 0.25rem;
@@ -106,6 +243,6 @@ const Wrapper = styled.section`
       top: 1rem;
     }
   }
-`
+`;
 
-export default Filters
+export default Filters;
