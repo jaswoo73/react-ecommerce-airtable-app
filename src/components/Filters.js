@@ -118,7 +118,35 @@ const Filters = () => {
               })}
             </div>
           </div>
+          {/* PRICE */}
+          <div className="form-control">
+            <h5>price</h5>
+            <p className="price">{formatPrice(price)}</p>
+            <input
+              type="range"
+              name="price"
+              onChange={updateFilters}
+              min={min_price}
+              max={max_price}
+              value={price}
+              step={1000}
+            />
+          </div>
+          {/* SHIPPING */}
+          <div className="form-control shipping">
+            <label htmlFor="shipping">free shipping</label>
+            <input
+              type="checkbox"
+              name="shipping"
+              id="shipping"
+              onChange={updateFilters}
+              checked={shipping}
+            />
+          </div>
         </form>
+        <button type="button" className="clear-btn" onClick={clearFilters}>
+          clear filters
+        </button>
       </div>
     </Wrapper>
   );
@@ -172,8 +200,36 @@ const Wrapper = styled.section`
     transform-origin: right;
   }
 
+  .category-btn.cat-active::after {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .category-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 2px;
+    background: var(--clr-primary-6);
+    transform-origin: top;
+    transform: scaleY(0);
+    transition: transform 0.3s;
+  }
+
+  .category-btn.cat-active::before {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+
+  .category-btn {
+    padding-left: 0;
+    transition: all 0.1s;
+  }
+
   .cat-active {
-    border-left: solid 3px var(--clr-primary-6);
+    /* border-left: solid 3px var(--clr-primary-6); */
     padding-left: 1rem;
     transition: var(--transition);
   }
@@ -229,7 +285,7 @@ const Wrapper = styled.section`
     text-transform: capitalize;
     column-gap: 0.5rem;
     font-size: 1rem;
-    max-width: 200px;
+    max-width: 130px;
   }
   .clear-btn {
     background: var(--clr-red-dark);
